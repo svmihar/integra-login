@@ -11,8 +11,10 @@ url = 'https://integra.its.ac.id/'
 driver = webdriver.Firefox()
 
 driver.get(url) 
-with open('nrp.txt','r') as f: 
+with open('nrp_good.txt','r') as f: 
     koleksi_nrp=f.readlines()
+    
+koleksi_nrp = list(set(koleksi_nrp))
 
 # koleksi_nrp = [
 #     '1215100115','1213100113','121310024'

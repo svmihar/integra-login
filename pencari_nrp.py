@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from pprint import pprint
 
 
-links = 'https://forlap.ristekdikti.go.id/mahasiswa/detailsemester/RDAyNjFBNjEtMzg1RC00RTFGLTk3RjUtMDVFOEREODU1NzE2/20181'
+links = 'https://forlap.ristekdikti.go.id/mahasiswa/detailsemester/MjE4NjA3NkItMURBNS00OTVCLTk0OTYtMDk3OTJBRTgyOERG/20181'
 req = requests.get(links)
 soup = BeautifulSoup(req.text, 'lxml')
 paginations =soup.find_all('div',{'class':'pagination'})
