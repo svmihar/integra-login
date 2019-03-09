@@ -8,13 +8,14 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 url = 'https://integra.its.ac.id/'
-driver = webdriver.Firefox()
+driver = webdriver.Firefox(executable_path='../../geckodriver.exe')
 
 driver.get(url) 
 with open('nrp.txt','r') as f: 
     koleksi_nrp=f.readlines()
-    
+print('panjang awal: ',len(koleksi_nrp))
 koleksi_nrp = list(set(koleksi_nrp))
+print('panjang akhir: ', len(koleksi_nrp))
 
 koleksi_nrp.sort()
 
@@ -37,6 +38,8 @@ def wait_til(xpath):
         EC.visibility_of_element_located((By.XPATH,xpath))
     )
 i = 0
+jumlah_berhasil = 0
+
 for nrp in koleksi_nrp: 
     i+=1
     try:
@@ -55,6 +58,7 @@ for nrp in koleksi_nrp:
             with open('berhasil.txt','a') as f: 
                 f.writelines(nrp+'\n')
             logout()    
+            jumlah_berhasil+=1
             print(nrp,'masuk')
             driver.delete_all_cookies()
             continue
@@ -63,5 +67,5 @@ for nrp in koleksi_nrp:
     except: 
         print(nrp,'gagal')
         driver.delete_all_cookies()
-    print('trying', i,'/',len(koleksi_nrp))
+    print('trying', i,'/',len(koleksi_nrp),'\n jumlah berhasil: ', jumlah_berhasil)
 driver.quit()

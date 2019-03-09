@@ -14,7 +14,6 @@ def cari_last_page(link):
     req = requests.get(link)
     soup = BeautifulSoup(req.text,'lxml')
     paginations = soup.find_all('div',{'class':'pagination'})
-    print(paginations)
     for pagination in paginations: 
         a = pagination.find_all('a')
         for link in a: 
