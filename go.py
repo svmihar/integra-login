@@ -6,11 +6,14 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC 
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.chrome.options import Options
+chrome_options = Options()
+chrome_options.add_argument("--start-maximized")
 
 url = 'https://integra.its.ac.id/'
 # driver = webdriver.Firefox(executable_path='../../geckodriver.exe')
 # driver = webdriver.PhantomJS(executable_path='../../phantomjs.exe')
-driver = webdriver.Chrome(executable_path='../../chromedriver.exe')
+driver = webdriver.Chrome(executable_path='../../chromedriver.exe', chrome_options=chrome_options)
 
 driver.get(url) 
 with open('nrp.txt','r') as f: 
@@ -47,7 +50,7 @@ for nrp in koleksi_nrp:
 
     i+=1
     try: 
-        # wait_til('//*[@id="navbarDropdown"]')
+        wait_til('//*[@id="navbarDropdown"]')
         time.sleep(.5)
         body = driver.find_element(By.TAG_NAME,'body')
         if 'SI Beasiswa' in body.text:  
