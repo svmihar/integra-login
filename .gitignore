@@ -1,1 +1,4 @@
 .log
+.vscode/
+berhasil.txt
+*.log
