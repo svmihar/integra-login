@@ -9,7 +9,7 @@ panjang akhir:  9434
 ## Getting Started
 - make sure you have an internal ITS connection
 - install depedencies: 
-  - install selenium
+  - install selenium (properly)
   - install beautifulsoup
   - install requests
 ## How does it work 
