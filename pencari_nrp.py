@@ -38,17 +38,14 @@ def generate_links(list_of_links):
     hasil = []
     print('generating links...')
     for link in tqdm(list_of_links):
-        try:
-            c_p = cari_last_page(link)
-            for _ in range(c_p):
-                page = f'{link}/{c_p}'
-                c_p -= 20
-                if c_p == 0:
-                    hasil.append(f'{link}/')
-                    break
-                hasil.append(page)
-        except:
-            print(f'error on {link}')
+        c_p = cari_last_page(link)
+        for _ in range(c_p):
+            page = f'{link}/{c_p}'
+            c_p -= 20
+            hasil.append(page)
+            if c_p == 0:
+                hasil.append(link)
+                break
 
     with open('link_mahasiswa.txt', 'a+') as f:
         for h in hasil:
