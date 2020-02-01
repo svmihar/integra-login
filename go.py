@@ -75,7 +75,10 @@ def main(nrp_txt_path):
     with Pool(cpu_count()) as p:
         hasil = list(
             tqdm(p.imap(loginer, koleksi_nrp), total=len(koleksi_nrp)))
-    print([h for h in hasil if h])
+    hasil = [h for h in hasil if h]
+    with open('berhasil.txt', 'w') as f: 
+        for h in hasil: 
+            f.writelines(f'{h}\n')
 
 
 if __name__ == '__main__':
